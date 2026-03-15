@@ -127,10 +127,10 @@ if (isMiniGame) {
     let currentPage = 'home';
     
     // 触摸事件处理
-    canvas.addEventListener('touchstart', function(e) {
-        e.preventDefault();
+    canvas.ontouchstart = function(e) {
+        if(e.preventDefault) e.preventDefault();
         
-        const touch = e.touches[0];
+        const touch = e.touches ? e.touches[0] : e;
         const info = wx.getSystemInfoSync();
         const x = touch.clientX * (750 / info.windowWidth);
         const y = touch.clientY * (1334 / info.windowHeight);
