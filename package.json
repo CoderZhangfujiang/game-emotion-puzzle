@@ -1,0 +1,14 @@
+{
+  "name": "game-emotion-puzzle",
+  "version": "1.0.0",
+  "description": "治愈系轻量解谜微信小游戏",
+  "main": "game.js",
+  "scripts": {
+    "test": "node test/run.js",
+    "test:static": "node test/static.test.js",
+    "test:unit": "node test/unit.test.js"
+  },
+  "keywords": ["game", "puzzle", "emotion", "weixin"],
+  "author": "",
+  "license": "MIT"
+}
