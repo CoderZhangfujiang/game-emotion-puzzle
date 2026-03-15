@@ -57,7 +57,7 @@ const $ = function(id) { return MiniGame.getElementById(id); };
 
 // 模拟 localStorage
 if (typeof localStorage === 'undefined') {
-    window.localStorage = {
+    globalThis.localStorage = {
         getItem: function(key) { return MiniGame.storageData[key] || null; },
         setItem: function(key, value) { MiniGame.storageData[key] = value; },
         removeItem: function(key) { delete MiniGame.storageData[key]; },
@@ -67,7 +67,7 @@ if (typeof localStorage === 'undefined') {
 
 // 模拟 navigator
 if (typeof navigator === 'undefined') {
-    window.navigator = { clipboard: { writeText: function() { return Promise.resolve(); } }, userAgent: 'wechat-miniprogram' };
+    globalThis.navigator = { clipboard: { writeText: function() { return Promise.resolve(); } }, userAgent: 'wechat-miniprogram' };
 }
 
 // ==================== 游戏配置 ====================
@@ -501,7 +501,7 @@ class EmotionPuzzleGame {
         // 音频上下文
         this.audioCtx = null;
         try {
-            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.audioCtx = new (globalThis.AudioContext || globalThis.webkitAudioContext)();
         } catch(e) {
             console.log('音频不可用');
         }
@@ -1178,8 +1178,8 @@ class EmotionPuzzleGame {
         const threshold = 15;
         let lastX = 0, lastY = 0, lastZ = 0;
         
-        if (window.DeviceMotionEvent) {
-            window.addEventListener('devicemotion', (event) => {
+        if (globalThis.DeviceMotionEvent) {
+            globalThis.addEventListener('devicemotion', (event) => {
                 const acc = event.accelerationIncludingGravity;
                 if (!acc) return;
                 
@@ -2009,10 +2009,10 @@ class EmotionPuzzleGame {
             
             item.addEventListener('mousedown', onStart);
             item.addEventListener('touchstart', onStart, { passive: false });
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('touchmove', onMove, { passive: false });
-            window.addEventListener('mouseup', onEnd);
-            window.addEventListener('touchend', onEnd);
+            globalThis.addEventListener('mousemove', onMove);
+            globalThis.addEventListener('touchmove', onMove, { passive: false });
+            globalThis.addEventListener('mouseup', onEnd);
+            globalThis.addEventListener('touchend', onEnd);
             
             leftItems.push(item);
             gameArea.appendChild(item);
@@ -3070,6 +3070,6 @@ if (typeof wx !== 'undefined' && wx.onShow) {
 let game;
 
 // 页面加载完成后初始化
-window.onload = () => {
+globalThis.onload = () => {
     game = new EmotionPuzzleGame();
 };
