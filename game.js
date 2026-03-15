@@ -72,39 +72,39 @@ var levelConfigs = [
     { id: 4, type: 'memory', title: '🧠 记忆大师', desc: '记住星星点亮的顺序', sequence: [1,3,2,4], reward: 'hopeful' },
     { id: 5, type: 'timing', title: '⏰ 等待时机', desc: '当指针指向红色区域时点击', reward: 'calm' },
     { id: 6, type: 'puzzle', title: '🧩 拼图', desc: '点击正确的颜色块', colors: ['#FF6B6B','#4ECDC4','#FFE66D','#FF6B6B'], correct: '#FF6B6B', reward: 'nostalgic' },
-    { id: 7, type: 'math', title: '➕ 简单算术', desc: '3 + 5 × 2 = ?', options: [11,13,15,17], answer: 13, reward: 'peaceful' },
+    { id: 7, type: 'math', title: '➕ 简单算术', desc: '3 + 5 × 2 = XX', options: [11,13,15,17], answer: 13, reward: 'peaceful' },
     { id: 8, type: 'color_choice', title: '🎨 心情颜色', desc: '选择你喜欢的颜色', colors: ['#FF6B6B','#4ECDC4','#FFE66D','#9B59B6'], reward: 'touched' },
     { id: 9, type: 'tap_sequence', title: '🌟 星星排序', desc: '按从大到小点击星星', answer: [5,4,3,2,1], reward: 'confident' },
     { id: 10, type: 'find_pattern', title: '🔍 找不同', desc: '找出不同的那个', pattern: [1,1,1,0,1], reward: 'excited' },
     { id: 11, type: 'count', title: '📊 数一数', desc: '有多少个正方形？', answer: 4, reward: 'brave' },
     { id: 12, type: 'timing', title: '🎯 精准点击', desc: '在圆心重合时点击', reward: 'curious' },
-    { id: 13, type: 'math', title: '🧮 算术题', desc: '10 - 3 × 2 = ?', options: [4,14,0,20], answer: 4, reward: 'dreamy' },
+    { id: 13, type: 'math', title: '🧮 算术题', desc: '10 - 3 × 2 = XX', options: [4,14,0,20], answer: 4, reward: 'dreamy' },
     { id: 14, type: 'color_choice', title: '🌈 彩虹选择', desc: '选择彩虹的颜色', colors: ['#FF0000','#FF7F00','#FFFF00','#00FF00','#0000FF','#4B0082','#8B00FF'], reward: 'melancholy' },
     { id: 15, type: 'memory', title: '🎵 音乐记忆', desc: '记住音阶顺序', sequence: [1,2,1,3,2], reward: 'lazy' },
     { id: 16, type: 'tap_sequence', title: '🔢 数字阶梯', desc: '从1点到10', answer: [1,2,3,4,5,6,7,8,9,10], reward: 'hopeful' },
-    { id: 17, type: 'find_pattern', title: '🔲 图形规律', desc: '找规律填空白', pattern: [0,1,0,1,?,1], answer: 0, reward: 'confident' },
+    { id: 17, type: 'find_pattern', title: '🔲 图形规律', desc: '找规律填空白', pattern: [0,1,0,1,XX,1], answer: 0, reward: 'confident' },
     { id: 18, type: 'count', title: '⭐ 星星计数', desc: '数一数有多少颗星', answer: 7, reward: 'dreamy' },
     { id: 19, type: 'timing', title: '⏱️ 节奏大师', desc: '跟着节奏点击', reward: 'excited' },
     { id: 20, type: 'puzzle', title: '🎯 颜色配对', desc: '找出相同的颜色', reward: 'brave' },
-    { id: 21, type: 'math', title: '➖ 减法运算', desc: '25 - 8 = ?', options: [15,17,18,19], answer: 17, reward: 'curious' },
+    { id: 21, type: 'math', title: '➖ 减法运算', desc: '25 - 8 = XX', options: [15,17,18,19], answer: 17, reward: 'curious' },
     { id: 22, type: 'color_choice', title: '🌙 夜晚选择', desc: '选择夜晚的颜色', colors: ['#000033','#000066','#003366','#004466'], reward: 'peaceful' },
     { id: 23, type: 'memory', title: '👁️ 视觉记忆', desc: '记住方块位置', reward: 'touched' },
     { id: 24, type: 'tap_sequence', title: '🎯 靶心射击', desc: '从中心到外围点击', answer: [5,4,3,2,1], reward: 'grateful' },
-    { id: 25, type: 'find_pattern', title: '📐 规律填空', desc: '2,4,6,8,?', answer: 10, reward: 'confident' },
+    { id: 25, type: 'find_pattern', title: '📐 规律填空', desc: '2,4,6,8,XX', answer: 10, reward: 'confident' },
     { id: 26, type: 'count', title: '🍎 水果数', desc: '有多少个苹果', answer: 6, reward: 'excited' },
     { id: 27, type: 'timing', title: '🎪 走钢丝', desc: '保持平衡', reward: 'brave' },
-    { id: 28, type: 'math', title: '✖️ 乘法挑战', desc: '7 × 8 = ?', options: [54,56,58,60], answer: 56, reward: 'curious' },
+    { id: 28, type: 'math', title: '✖️ 乘法挑战', desc: '7 × 8 = XX', options: [54,56,58,60], answer: 56, reward: 'curious' },
     { id: 29, type: 'color_choice', title: '🌸 春天颜色', desc: '选择春天的颜色', colors: ['#FFB7C5','#98FB98','#87CEEB','#DDA0DD'], reward: 'dreamy' },
     { id: 30, type: 'memory', title: '🔢 数字记忆', desc: '记住数字顺序', sequence: [8,3,7,1,9], reward: 'melancholy' },
     { id: 31, type: 'tap_sequence', title: '🏃 跑步比赛', desc: '按顺序经过每个Checkpoint', answer: [1,2,3,4,5], reward: 'lazy' },
-    { id: 32, type: 'find_pattern', title: '🎨 颜色规律', desc: '红黄蓝红黄?', answer: '蓝', reward: 'excited' },
+    { id: 32, type: 'find_pattern', title: '🎨 颜色规律', desc: '红黄蓝红黄XX', answer: '蓝', reward: 'excited' },
     { id: 33, type: 'count', title: '🔷 几何图形', desc: '有多少个三角形', answer: 3, reward: 'brave' },
     { id: 34, type: 'timing', title: '🚦 红绿灯', desc: '绿灯时通过', reward: 'curious' },
-    { id: 35, type: 'math', title: '➗ 除法运算', desc: '56 ÷ 7 = ?', options: [6,7,8,9], answer: 8, reward: 'dreamy' },
+    { id: 35, type: 'math', title: '➗ 除法运算', desc: '56 ÷ 7 = XX', options: [6,7,8,9], answer: 8, reward: 'dreamy' },
     { id: 36, type: 'color_choice', title: '🔥 火焰颜色', desc: '选择火焰的主色调', colors: ['#FF4500','#FF6347','#FF7F50','#DC143C'], reward: 'melancholy' },
     { id: 37, type: 'memory', title: '🎵 音符记忆', desc: '记住旋律', sequence: [1,2,3,2,1], reward: 'lazy' },
     { id: 38, type: 'tap_sequence', title: '🧗 攀岩挑战', desc: '从下往上爬', answer: [1,2,3,4,5], reward: 'brave' },
-    { id: 39, type: 'find_pattern', title: '📊 数据规律', desc: '1,1,2,3,5,8,?', answer: 13, reward: 'curious' },
+    { id: 39, type: 'find_pattern', title: '📊 数据规律', desc: '1,1,2,3,5,8,XX', answer: 13, reward: 'curious' },
     { id: 40, type: 'count', title: '🎲 骰子点数', desc: '所有骰子的总和', answer: 18, reward: 'dreamy' },
     { id: 41, type: 'final', title: '🎉 最终关卡', desc: 'Congratulations!', reward: 'calm' },
     { id: 42, type: 'bonus', title: '⭐ 额外奖励', desc: '完成所有关卡', reward: 'hopeful' }
@@ -267,7 +267,7 @@ if (isMiniGame) {
         // 根据关卡类型渲染不同的游戏内容
         if (levelData.type === 'tap_sequence' || levelData.type === 'tap') {
             // 绘制数字按钮
-            var maxNum = levelData.answer ? Math.max.apply(null, levelData.answer) : 10;
+            var maxNum = levelData.answer XX Math.max.apply(null, levelData.answer) : 10;
             var btnY = 300;
             
             for (var i = 0; i < maxNum; i++) {
@@ -401,7 +401,7 @@ if (isMiniGame) {
             // 游戏逻辑 - 简单版：按顺序点击
             var levelData = levelConfigs[currentLevel - 1];
             if (levelData && (levelData.type === 'tap_sequence' || levelData.type === 'tap')) {
-                var maxNum = levelData.answer ? Math.max.apply(null, levelData.answer) : 10;
+                var maxNum = levelData.answer XX Math.max.apply(null, levelData.answer) : 10;
                 var btnY = 300;
                 
                 if (y >= btnY - 50 && y <= btnY + 50) {
