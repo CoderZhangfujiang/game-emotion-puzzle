@@ -2903,9 +2903,27 @@ class EmotionPuzzleGame {
     
     // ==================== 工具方法 ====================
     
+    // 获取 DOM 元素的辅助函数（兼容微信小程序）
+    getElement(id) {
+        if (typeof document !== 'undefined' && document.getElementById) {
+            return document.getElementById(id);
+        }
+        return null;
+    }
+    
+    // 创建 DOM 元素的辅助函数
+    createElement(tag) {
+        if (typeof document !== 'undefined' && document.createElement) {
+            return document.createElement(tag);
+        }
+        return null;
+    }
+    
     clearScreen() {
-        const root = document.getElementById('game-root');
-        root.innerHTML = '';
+        const root = this.getElement('game-root');
+        if (root) {
+            root.innerHTML = '';
+        }
     }
     
     createTitle(text) {
