@@ -16,6 +16,7 @@ if (isMiniGame) {
     // 游戏状态
     let currentLevel = 1;
     let emotionBottles = [];
+    let currentPage = 'home';
     
     // 绘制背景
     function drawBg() {
@@ -68,35 +69,31 @@ if (isMiniGame) {
     
     // 首页
     function renderHome() {
+        currentPage = 'home';
         drawBg();
         drawText('🎭 情绪解谜馆', 375, 150, 56);
-        
-        // 绘制4个主按钮
         drawBtn(100, 250, 550, 100, '开始解谜', '#ff6b6b');
         drawBtn(100, 380, 550, 100, '📚 我的收藏', '#4ECDC4');
         drawBtn(100, 510, 550, 100, '🏆 排行榜', '#FFD700');
         drawBtn(100, 640, 550, 100, '📋 每日任务', '#9B59B6');
-        
-        // 绘制底部提示
         drawText('点击按钮开始游戏', 375, 1200, 24, 'rgba(255,255,255,0.6)');
     }
     
     // 游戏页面
     function renderGame() {
+        currentPage = 'game';
         drawBg();
         drawText('🎮 第' + currentLevel + '关', 375, 80, 40);
         drawText('按顺序点击1-5', 375, 140, 24, 'rgba(255,255,255,0.8)');
-        
-        // 绘制5个数字按钮
         for(let i = 0; i < 5; i++) {
             drawCircleBtn(150 + i * 130, 350, 50, String(i + 1));
         }
-        
         drawBtn(100, 1100, 550, 90, '← 返回首页', '#666');
     }
     
     // 收藏馆
     function renderCollection() {
+        currentPage = 'collection';
         drawBg();
         drawText('📚 我的收藏', 375, 100, 44);
         drawText('暂无收藏，快去通关吧', 375, 300, 28, 'rgba(255,255,255,0.7)');
@@ -105,6 +102,7 @@ if (isMiniGame) {
     
     // 排行榜
     function renderRank() {
+        currentPage = 'rank';
         drawBg();
         drawText('🏆 排行榜', 375, 100, 44);
         drawText('暂未开放', 375, 300, 28, 'rgba(255,255,255,0.7)');
@@ -113,6 +111,7 @@ if (isMiniGame) {
     
     // 每日任务
     function renderTask() {
+        currentPage = 'task';
         drawBg();
         drawText('📋 每日任务', 375, 100, 44);
         drawText('完成3关，解锁奖励', 375, 250, 28, 'rgba(255,255,255,0.7)');
@@ -120,59 +119,43 @@ if (isMiniGame) {
         drawBtn(100, 1100, 550, 90, '← 返回', '#666');
     }
     
-    // 渲染首页
-    renderHome();
-    
-    // 当前页面
-    let currentPage = 'home';
-    
-    // 触摸事件处理
-    canvas.ontouchstart = function(e) {
-        if(e.preventDefault) e.preventDefault();
-        
-        const touch = e.touches ? e.touches[0] : e;
-        const info = wx.getSystemInfoSync();
-        const x = touch.clientX * (750 / info.windowWidth);
-        const y = touch.clientY * (1334 / info.windowHeight);
-        
-        // 首页按钮检测
+    // 触摸事件处理 - 使用微信小游戏正确的API
+    function handleTouch(x, y) {
         if (currentPage === 'home') {
             if (y >= 250 && y <= 350) {
-                currentPage = 'game';
                 renderGame();
             } else if (y >= 380 && y <= 480) {
-                currentPage = 'collection';
                 renderCollection();
             } else if (y >= 510 && y <= 610) {
-                currentPage = 'rank';
                 renderRank();
             } else if (y >= 640 && y <= 740) {
-                currentPage = 'task';
                 renderTask();
             }
         } else {
-            // 其他页面返回首页
             if (y >= 1100 && y <= 1190) {
-                currentPage = 'home';
                 renderHome();
             }
         }
-    });
-    
-    // 刷新画布
-    function render() {
-        if (currentPage === 'home') renderHome();
-        else if (currentPage === 'game') renderGame();
-        else if (currentPage === 'collection') renderCollection();
-        else if (currentPage === 'rank') renderRank();
-        else if (currentPage === 'task') renderTask();
     }
+    
+    // 渲染首页
+    renderHome();
+    
+    // 使用 wx.onTouchStart 监听触摸事件
+    wx.onTouchStart(function(res) {
+        if (res && res.touches && res.touches.length > 0) {
+            const touch = res.touches[0];
+            const info = wx.getSystemInfoSync();
+            const x = touch.clientX * (750 / info.windowWidth);
+            const y = touch.clientY * (1334 / info.windowHeight);
+            handleTouch(x, y);
+        }
+    });
     
     console.log('情绪解谜馆启动成功');
 }
 
 // ==================== 浏览器环境 ====================
 if (typeof document !== 'undefined') {
-    // 浏览器环境的代码在这里
     console.log('浏览器环境');
 }
