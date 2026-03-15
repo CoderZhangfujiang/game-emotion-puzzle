@@ -123,25 +123,29 @@ if (isMiniGame) {
     // 渲染首页
     renderHome();
     
-    // 使用 requestAnimationFrame 模拟游戏循环
-    function gameLoop() {
-        // 可以在这里添加游戏逻辑
+    // 微信小游戏触摸事件绑定
+    if (typeof wx.onTouchStart === 'function') {
+        wx.onTouchStart(function(res) {
+            if (res.touches && res.touches.length > 0) {
+                var touch = res.touches[0];
+                var info = wx.getSystemInfoSync();
+                var x = touch.clientX * (750 / info.windowWidth);
+                var y = touch.clientY * (1334 / info.windowHeight);
+                handleTouch(x, y);
+            }
+        });
+    } else {
+        // 备用方案
+        canvas.addEventListener('touchstart', function(res) {
+            if (res.touches && res.touches.length > 0) {
+                var touch = res.touches[0];
+                var info = wx.getSystemInfoSync();
+                var x = touch.clientX * (750 / info.windowWidth);
+                var y = touch.clientY * (1334 / info.windowHeight);
+                handleTouch(x, y);
+            }
+        });
     }
-    
-    if (typeof requestAnimationFrame === 'function') {
-        requestAnimationFrame(gameLoop);
-    }
-    
-    // 触摸事件处理 - 使用 canvas.ontouchstart
-    canvas.ontouchstart = function(res) {
-        if (res && res.touches && res.touches.length > 0) {
-            var touch = res.touches[0];
-            var info = wx.getSystemInfoSync();
-            var x = touch.clientX * (750 / info.windowWidth);
-            var y = touch.clientY * (1334 / info.windowHeight);
-            handleTouch(x, y);
-        }
-    };
     
     console.log('情绪解谜馆启动成功');
 }
