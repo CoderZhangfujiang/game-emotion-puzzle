@@ -3060,8 +3060,8 @@ class EmotionPuzzleGame {
 }
 
 // ==================== 启动游戏 ====================
-// 模拟微信小游戏环境
-if (typeof wx !== 'undefined') {
+// 模拟微信小游戏环境（仅在微信环境中执行）
+if (typeof wx !== 'undefined' && wx.onShow) {
     wx.onShow(() => console.log('游戏显示'));
     wx.onHide(() => console.log('游戏隐藏'));
 }
