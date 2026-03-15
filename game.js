@@ -8,7 +8,7 @@
 // ==================== 浏览器/微信环境兼容层 ====================
 // 检测运行环境
 const isWeChatMiniProgram = typeof wx !== 'undefined' && typeof wx.createSelectorQuery === 'function';
-const isBrowser = typeof document !== 'undefined' && typeof document.createElement === 'function';
+const isBrowser = typeof document !== 'undefined' && typeof $$ === 'function';
 
 // 为微信小程序创建兼容的 document
 if (!isBrowser) {
@@ -94,6 +94,22 @@ if (!isBrowser) {
         userAgent: 'wechat-miniprogram'
     };
 }
+
+// ==================== 全局兼容函数 ====================
+// 兼容 document 的简写函数
+const $ = function(id) {
+    if (typeof document !== 'undefined' && $) {
+        return $(id);
+    }
+    return null;
+};
+
+const $$ = function(tag) {
+    if (typeof document !== 'undefined' && $$) {
+        return $$(tag);
+    }
+    return null;
+};
 
 // ==================== 游戏配置 ====================
 const GAME_CONFIG = {
@@ -628,7 +644,7 @@ class EmotionPuzzleGame {
         this.createButton('返回', () => this.showHome());
         
         // 音效开关
-        const soundRow = document.createElement('div');
+        const soundRow = $$('div');
         soundRow.style.cssText = 'position:absolute;top:200px;left:50px;right:50px;display:flex;justify-content:space-between;align-items:center;padding:20px;background:rgba(255,255,255,0.1);border-radius:10px;';
         soundRow.innerHTML = `
             <span style="color:#fff;font-size:18px;">🔈 游戏音效</span>
@@ -636,10 +652,10 @@ class EmotionPuzzleGame {
                 <div style="width:26px;height:26px;background:#fff;border-radius:50%;position:absolute;top:2px;${this.soundEnabled?'right:2px':'left:2px'};transition:all 0.3s;"></div>
             </div>
         `;
-        document.getElementById('game-root').appendChild(soundRow);
+        ($('game-root') || {appendChild:function(){}}).appendChild(soundRow);
         
         // 音乐开关
-        const musicRow = document.createElement('div');
+        const musicRow = $$('div');
         musicRow.style.cssText = 'position:absolute;top:280px;left:50px;right:50px;display:flex;justify-content:space-between;align-items:center;padding:20px;background:rgba(255,255,255,0.1);border-radius:10px;';
         musicRow.innerHTML = `
             <span style="color:#fff;font-size:18px;">🎵 背景音乐</span>
@@ -647,10 +663,10 @@ class EmotionPuzzleGame {
                 <div style="width:26px;height:26px;background:#fff;border-radius:50%;position:absolute;top:2px;${this.musicEnabled?'right:2px':'left:2px'};transition:all 0.3s;"></div>
             </div>
         `;
-        document.getElementById('game-root').appendChild(musicRow);
+        ($('game-root') || {appendChild:function(){}}).appendChild(musicRow);
         
         // 试听按钮
-        const testBtn = document.createElement('button');
+        const testBtn = $$('button');
         testBtn.className = 'game-btn';
         testBtn.style.top = '400px';
         testBtn.textContent = '🔊 试听音效';
@@ -658,7 +674,7 @@ class EmotionPuzzleGame {
             this.playSound('success');
             this.showTip('音效播放中~');
         };
-        document.getElementById('game-root').appendChild(testBtn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(testBtn);
     }
     
     toggleSound() {
@@ -792,11 +808,11 @@ class EmotionPuzzleGame {
         // 显示进度
         this.createText(`今日进度: ${completedCount}/${data.tasks.length}`, 180);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.style.cssText = 'position:absolute;top:240px;left:50px;right:50px;bottom:150px;overflow-y:auto;';
         
         data.tasks.forEach(task => {
-            const item = document.createElement('div');
+            const item = $$('div');
             item.style.cssText = `
                 padding:20px;
                 background:${task.done ? 'rgba(78,205,196,0.3)' : 'rgba(255,255,255,0.1)'};
@@ -829,10 +845,10 @@ class EmotionPuzzleGame {
             container.appendChild(item);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
         
         // 领取奖励按钮
-        const claimBtn = document.createElement('button');
+        const claimBtn = $$('button');
         claimBtn.className = 'game-btn';
         claimBtn.style.top = '920px';
         claimBtn.style.background = completedCount > 0 ? '#FFD700' : '#666';
@@ -856,7 +872,7 @@ class EmotionPuzzleGame {
                 this.showDailyTasks();
             }
         };
-        document.getElementById('game-root').appendChild(claimBtn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(claimBtn);
     }
     
     // 排行榜
@@ -888,11 +904,11 @@ class EmotionPuzzleGame {
         this.createText(`你的排名: 第 ${playerRank} 名`, 180);
         
         // 排行榜列表
-        const list = document.createElement('div');
+        const list = $$('div');
         list.style.cssText = 'position:absolute;top:240px;left:50px;right:50px;bottom:150px;overflow-y:auto;';
         
         mockRankings.forEach((rank, idx) => {
-            const item = document.createElement('div');
+            const item = $$('div');
             item.style.cssText = `
                 display:flex;align-items:center;padding:15px;
                 background:${rank.isMe ? 'rgba(78,205,196,0.3)' : 'rgba(255,255,255,0.1)'};
@@ -913,10 +929,10 @@ class EmotionPuzzleGame {
             list.appendChild(item);
         });
         
-        document.getElementById('game-root').appendChild(list);
+        ($('game-root') || {appendChild:function(){}}).appendChild(list);
         
         // 刷新排行榜按钮
-        const refreshBtn = document.createElement('button');
+        const refreshBtn = $$('button');
         refreshBtn.className = 'game-btn';
         refreshBtn.style.top = '920px';
         refreshBtn.style.background = '#07C160';
@@ -925,7 +941,7 @@ class EmotionPuzzleGame {
             this.showTip('排行榜已刷新~');
             this.showLeaderboard();
         };
-        document.getElementById('game-root').appendChild(refreshBtn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(refreshBtn);
     }
     
     // 关卡选择
@@ -1111,11 +1127,11 @@ class EmotionPuzzleGame {
     
     // 玩法: 心情颜色选择
     renderColorChoice(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         levelData.colors.forEach((color, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'color-btn';
             btn.style.background = color;
             btn.onclick = () => {
@@ -1124,23 +1140,23 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 滑块
     renderSlider(levelData) {
         this.createText('拖动滑块到中间', 250);
         
-        const track = document.createElement('div');
+        const track = $$('div');
         track.className = 'slider-track';
         
-        const thumb = document.createElement('div');
+        const thumb = $$('div');
         thumb.className = 'slider-thumb';
         thumb.style.left = '0%';
         
         track.appendChild(thumb);
         track.style.top = '320px';
-        document.getElementById('game-root').appendChild(track);
+        ($('game-root') || {appendChild:function(){}}).appendChild(track);
         
         let isDragging = false;
         
@@ -1209,7 +1225,7 @@ class EmotionPuzzleGame {
             });
         } else {
             // 模拟模式
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'game-btn';
             btn.style.top = '350px';
             btn.textContent = '📳 摇晃 (模拟)';
@@ -1220,13 +1236,13 @@ class EmotionPuzzleGame {
                     this.completeLevel(levelData.reward);
                 }
             };
-            document.getElementById('game-root').appendChild(btn);
+            ($('game-root') || {appendChild:function(){}}).appendChild(btn);
         }
     }
     
     // 玩法: 长按
     renderLongPress(levelData) {
-        const btn = document.createElement('button');
+        const btn = $$('button');
         btn.className = 'long-press-btn';
         btn.textContent = '按住3秒';
         btn.style.top = '280px';
@@ -1258,7 +1274,7 @@ class EmotionPuzzleGame {
         btn.onmouseleave = endPress;
         btn.ontouchend = endPress;
         
-        document.getElementById('game-root').appendChild(btn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(btn);
     }
     
     // 玩法: 双击
@@ -1268,7 +1284,7 @@ class EmotionPuzzleGame {
         let lastTap = 0;
         const now = Date.now();
         
-        document.getElementById('game-root').onclick = () => {
+        ($('game-root') || {appendChild:function(){}}).onclick = () => {
             if (now - lastTap < 300) {
                 this.completeLevel(levelData.reward);
             }
@@ -1280,12 +1296,12 @@ class EmotionPuzzleGame {
     renderSwipe(levelData) {
         this.createText('从左向右滑动', 250);
         
-        const arrow = document.createElement('div');
+        const arrow = $$('div');
         arrow.className = 'swipe-arrow';
         arrow.textContent = '➡️';
         arrow.style.top = '320px';
         
-        document.getElementById('game-root').appendChild(arrow);
+        ($('game-root') || {appendChild:function(){}}).appendChild(arrow);
         
         let startX = 0;
         const onMove = (e) => {
@@ -1295,7 +1311,7 @@ class EmotionPuzzleGame {
             }
         };
         
-        document.getElementById('game-root').ontouchstart = (e) => {
+        ($('game-root') || {appendChild:function(){}}).ontouchstart = (e) => {
             startX = e.touches[0].clientX;
             document.ontouchmove = onMove;
         };
@@ -1306,7 +1322,7 @@ class EmotionPuzzleGame {
         this.createText('仔细看，找找星星在哪', 250);
         
         // 随机位置隐藏星星
-        const star = document.createElement('div');
+        const star = $$('div');
         star.textContent = '⭐';
         star.style.position = 'absolute';
         star.style.fontSize = '30px';
@@ -1320,18 +1336,18 @@ class EmotionPuzzleGame {
             setTimeout(() => this.completeLevel(levelData.reward), 300);
         };
         
-        document.getElementById('game-root').appendChild(star);
+        ($('game-root') || {appendChild:function(){}}).appendChild(star);
         
         // 添加干扰项
         for (let i = 0; i < 5; i++) {
-            const dummy = document.createElement('div');
+            const dummy = $$('div');
             dummy.textContent = '⭐';
             dummy.style.position = 'absolute';
             dummy.style.fontSize = '30px';
             dummy.style.left = (Math.random() * 70 + 15) + '%';
             dummy.style.top = (Math.random() * 40 + 30) + '%';
             dummy.style.opacity = '0.1';
-            document.getElementById('game-root').appendChild(dummy);
+            ($('game-root') || {appendChild:function(){}}).appendChild(dummy);
         }
     }
     
@@ -1342,7 +1358,7 @@ class EmotionPuzzleGame {
         let bubblesLeft = 5;
         
         for (let i = 0; i < 5; i++) {
-            const bubble = document.createElement('div');
+            const bubble = $$('div');
             bubble.className = 'bubble';
             bubble.textContent = '🫧';
             bubble.style.left = (Math.random() * 60 + 20) + '%';
@@ -1361,7 +1377,7 @@ class EmotionPuzzleGame {
                 }
             };
             
-            document.getElementById('game-root').appendChild(bubble);
+            ($('game-root') || {appendChild:function(){}}).appendChild(bubble);
         }
     }
     
@@ -1369,16 +1385,16 @@ class EmotionPuzzleGame {
     renderGravity(levelData) {
         this.createText('点击让星星掉落', 250);
         
-        const box = document.createElement('div');
+        const box = $$('div');
         box.className = 'gravity-box';
         box.style.top = '450px';
         
-        const star = document.createElement('div');
+        const star = $$('div');
         star.textContent = '⭐';
         star.className = 'gravity-star';
         
         box.appendChild(star);
-        document.getElementById('game-root').appendChild(box);
+        ($('game-root') || {appendChild:function(){}}).appendChild(box);
         
         let dropped = false;
         
@@ -1397,14 +1413,14 @@ class EmotionPuzzleGame {
     
     // 玩法: 数字顺序点击
     renderSequenceTap(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         let currentNum = 1;
         const maxNum = levelData.endNum || 10;
         
         for (let i = 1; i <= maxNum; i++) {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = i;
             btn.onclick = () => {
@@ -1419,23 +1435,23 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         }
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 平衡
     renderBallance(levelData) {
         this.createText('保持小球在中间', 250);
         
-        const track = document.createElement('div');
+        const track = $$('div');
         track.className = 'slider-track';
         
-        const ball = document.createElement('div');
+        const ball = $$('div');
         ball.className = 'slider-thumb';
         ball.style.left = '50%';
         
         track.appendChild(ball);
         track.style.top = '320px';
-        document.getElementById('game-root').appendChild(track);
+        ($('game-root') || {appendChild:function(){}}).appendChild(track);
         
         let pos = 50;
         const interval = setInterval(() => {
@@ -1464,7 +1480,7 @@ class EmotionPuzzleGame {
         this.createText('点击绿色，避开红色！', 250);
         
         let score = 0;
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const spawnEnemy = () => {
@@ -1474,7 +1490,7 @@ class EmotionPuzzleGame {
             }
             
             const isGood = Math.random() > 0.4;
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = isGood ? '🟢' : '🔴';
             btn.style.position = 'absolute';
@@ -1497,7 +1513,7 @@ class EmotionPuzzleGame {
                 }
             };
             
-            document.getElementById('game-root').appendChild(btn);
+            ($('game-root') || {appendChild:function(){}}).appendChild(btn);
             
             // 自动消失
             setTimeout(() => {
@@ -1518,13 +1534,13 @@ class EmotionPuzzleGame {
         const symbols = ['⭐', '⭐', '🌙', '🌙'];
         const shuffled = symbols.sort(() => Math.random() - 0.5);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         let clicked = [];
         
         shuffled.forEach((sym, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = sym;
             btn.onclick = () => {
@@ -1549,19 +1565,19 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 排序
     renderSort(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         let currentMin = 0;
         const nums = [...levelData.numbers].sort((a, b) => a - b);
         
         levelData.numbers.forEach((num, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = num;
             btn.onclick = () => {
@@ -1578,18 +1594,18 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 找文字
     renderWordFind(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const shuffled = [...levelData.words].sort(() => Math.random() - 0.5);
         
         shuffled.forEach(word => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.style.fontSize = '28px';
             btn.textContent = word;
@@ -1603,7 +1619,7 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 开灯关灯
@@ -1611,14 +1627,14 @@ class EmotionPuzzleGame {
         this.createText('点击让所有灯亮起来', 250);
         
         const size = levelData.size || 3;
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
         
         let lights = [];
         
         for (let i = 0; i < size * size; i++) {
-            const light = document.createElement('div');
+            const light = $$('div');
             light.className = 'light-cell';
             light.style.width = '60px';
             light.style.height = '60px';
@@ -1640,7 +1656,7 @@ class EmotionPuzzleGame {
             container.appendChild(light);
         }
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 连续计算
@@ -1659,11 +1675,11 @@ class EmotionPuzzleGame {
             const options = [problem.a, problem.a + 1, problem.a - 1, problem.a + 2];
             const shuffled = options.sort(() => Math.random() - 0.5);
             
-            const container = document.createElement('div');
+            const container = $$('div');
             container.className = 'level-container';
             
             shuffled.forEach(opt => {
-                const btn = document.createElement('button');
+                const btn = $$('button');
                 btn.className = 'math-btn';
                 btn.textContent = opt;
                 btn.onclick = () => {
@@ -1679,7 +1695,7 @@ class EmotionPuzzleGame {
                 container.appendChild(btn);
             });
             
-            document.getElementById('game-root').appendChild(container);
+            ($('game-root') || {appendChild:function(){}}).appendChild(container);
         };
         
         showProblem();
@@ -1689,13 +1705,13 @@ class EmotionPuzzleGame {
     renderColorMatch(levelData) {
         this.createText(`选择"${levelData.colorName}"颜色的按钮`, 220);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const shuffled = [...levelData.options].sort(() => Math.random() - 0.5);
         
         shuffled.forEach(color => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.style.width = '100px';
             btn.style.height = '60px';
             btn.style.background = color;
@@ -1714,19 +1730,19 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 字母顺序
     renderLetterOrder(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const sorted = [...levelData.letters].sort();
         let currentIndex = 0;
         
         levelData.letters.forEach((letter, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = letter;
             btn.onclick = () => {
@@ -1743,7 +1759,7 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 魔法盒子
@@ -1751,11 +1767,11 @@ class EmotionPuzzleGame {
         const boxes = ['🎁', '📦', '🎀'];
         let opened = false;
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         boxes.forEach((box, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.style.fontSize = '50px';
             btn.textContent = box;
@@ -1770,14 +1786,14 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 呼吸
     renderBreathing(levelData) {
         this.createText('深呼吸... 吸气... 呼气...', 250);
         
-        const circle = document.createElement('div');
+        const circle = $$('div');
         circle.style.width = '100px';
         circle.style.height = '100px';
         circle.style.background = 'rgba(78, 205, 196, 0.5)';
@@ -1788,7 +1804,7 @@ class EmotionPuzzleGame {
         circle.style.transform = 'translate(-50%, -50%)';
         circle.style.transition = 'all 3s ease';
         
-        document.getElementById('game-root').appendChild(circle);
+        ($('game-root') || {appendChild:function(){}}).appendChild(circle);
         
         let breatheCount = 0;
         
@@ -1826,7 +1842,7 @@ class EmotionPuzzleGame {
         let lit = 0;
         
         positions.forEach((pos, idx) => {
-            const star = document.createElement('div');
+            const star = $$('div');
             star.textContent = '⭐';
             star.style.position = 'absolute';
             star.style.left = pos.x + '%';
@@ -1847,7 +1863,7 @@ class EmotionPuzzleGame {
                 }
             };
             
-            document.getElementById('game-root').appendChild(star);
+            ($('game-root') || {appendChild:function(){}}).appendChild(star);
         });
     }
     
@@ -1858,11 +1874,11 @@ class EmotionPuzzleGame {
         const chunks = [...levelData.chunks].sort(() => Math.random() - 0.5);
         let formed = '';
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         chunks.forEach(chunk => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.style.fontSize = '36px';
             btn.textContent = chunk;
@@ -1883,22 +1899,22 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 故事选择
     renderStoryChoice(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         levelData.options.forEach(opt => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'game-btn';
             btn.style.position = 'relative';
             btn.style.top = (280 + levelData.options.indexOf(opt) * 80) + 'px';
             btn.textContent = opt;
             btn.onclick = () => this.completeLevel(levelData.reward);
-            document.getElementById('game-root').appendChild(btn);
+            ($('game-root') || {appendChild:function(){}}).appendChild(btn);
         });
     }
     
@@ -1911,7 +1927,7 @@ class EmotionPuzzleGame {
         this.createText('你收集了所有情绪瓶', 250);
         this.createText('🌟 💙 🎉 💜 ❤️ 🙏 🌱 🍃', 320);
         
-        const btn = document.createElement('button');
+        const btn = $$('button');
         btn.className = 'game-btn';
         btn.style.top = '450px';
         btn.textContent = '🏆 领取毕业证书';
@@ -1919,7 +1935,7 @@ class EmotionPuzzleGame {
             this.showTip('🎉 恭喜你！');
             this.completeLevel(levelData.reward);
         };
-        document.getElementById('game-root').appendChild(btn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(btn);
     }
     
     // 玩法: 拖拽配对
@@ -1932,7 +1948,7 @@ class EmotionPuzzleGame {
             { left: '🟢', right: '🟢' }
         ];
         
-        const gameArea = document.createElement('div');
+        const gameArea = $$('div');
         gameArea.style.cssText = 'position:absolute;top:350px;left:0;right:0;bottom:0;';
         
         const leftItems = [];
@@ -1941,7 +1957,7 @@ class EmotionPuzzleGame {
         
         // 左侧元素
         pairs.forEach((pair, idx) => {
-            const item = document.createElement('div');
+            const item = $$('div');
             item.textContent = pair.left;
             item.style.cssText = `
                 position:absolute;
@@ -2028,7 +2044,7 @@ class EmotionPuzzleGame {
         // 右侧元素（目标）
         const shuffledRight = [...pairs].sort(() => Math.random() - 0.5);
         shuffledRight.forEach((pair, idx) => {
-            const item = document.createElement('div');
+            const item = $$('div');
             item.textContent = pair.right;
             item.dataset.matched = 'false';
             item.style.cssText = `
@@ -2042,7 +2058,7 @@ class EmotionPuzzleGame {
             gameArea.appendChild(item);
         });
         
-        document.getElementById('game-root').appendChild(gameArea);
+        ($('game-root') || {appendChild:function(){}}).appendChild(gameArea);
     }
     
     // 玩法: 滑动拼图
@@ -2050,7 +2066,7 @@ class EmotionPuzzleGame {
         this.createText('滑动还原图案', 250);
         
         const size = levelData.size || 3;
-        const container = document.createElement('div');
+        const container = $$('div');
         container.style.cssText = 'position:absolute;top:320px;left:50%;transform:translateX(-50%);display:grid;grid-template-columns:repeat(3,80px);gap:5px;';
         
         let tiles = [1,2,3,4,5,6,7,8,0];
@@ -2069,7 +2085,7 @@ class EmotionPuzzleGame {
         const render = () => {
             container.innerHTML = '';
             tiles.forEach((num, idx) => {
-                const tile = document.createElement('div');
+                const tile = $$('div');
                 tile.style.cssText = `width:80px;height:80px;background:${num?'#4ECDC4':'transparent'};display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;border-radius:8px;cursor:pointer;`;
                 tile.textContent = num || '';
                 tile.onclick = () => {
@@ -2088,19 +2104,19 @@ class EmotionPuzzleGame {
             });
         };
         render();
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 密码锁
     renderPassword(levelData) {
         this.createText('输入密码: ' + levelData.answer, 220);
         
-        const input = document.createElement('input');
+        const input = $$('input');
         input.type = 'text';
         input.style.cssText = 'position:absolute;top:300px;left:50%;transform:translateX(-50%);width:200px;height:50px;font-size:24px;text-align:center;border-radius:10px;border:2px solid #4ECDC4;';
-        document.getElementById('game-root').appendChild(input);
+        ($('game-root') || {appendChild:function(){}}).appendChild(input);
         
-        const btn = document.createElement('button');
+        const btn = $$('button');
         btn.className = 'game-btn';
         btn.style.top = '380px';
         btn.textContent = '确认';
@@ -2113,18 +2129,18 @@ class EmotionPuzzleGame {
                 input.value = '';
             }
         };
-        document.getElementById('game-root').appendChild(btn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(btn);
     }
     
     // 玩法: 颜色混合
     renderColorMix(levelData) {
         this.createText(levelData.desc, 220);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         levelData.options.forEach(opt => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = opt;
             btn.onclick = () => {
@@ -2137,24 +2153,24 @@ class EmotionPuzzleGame {
             };
             container.appendChild(btn);
         });
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 打字练习
     renderTyping(levelData) {
         this.createText(levelData.desc, 200);
         
-        const display = document.createElement('div');
+        const display = $$('div');
         display.style.cssText = 'position:absolute;top:280px;left:0;right:0;text-align:center;font-size:40px;color:#fff;';
         display.textContent = levelData.target;
-        document.getElementById('game-root').appendChild(display);
+        ($('game-root') || {appendChild:function(){}}).appendChild(display);
         
-        const input = document.createElement('input');
+        const input = $$('input');
         input.type = 'text';
         input.style.cssText = 'position:absolute;top:360px;left:50%;transform:translateX(-50%);width:200px;height:50px;font-size:24px;text-align:center;border-radius:10px;border:2px solid #4ECDC4;';
-        document.getElementById('game-root').appendChild(input);
+        ($('game-root') || {appendChild:function(){}}).appendChild(input);
         
-        const btn = document.createElement('button');
+        const btn = $$('button');
         btn.className = 'game-btn';
         btn.style.top = '440px';
         btn.textContent = '确认';
@@ -2166,21 +2182,21 @@ class EmotionPuzzleGame {
                 this.showTip('再试试~');
             }
         };
-        document.getElementById('game-root').appendChild(btn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(btn);
     }
     
     // 玩法: 找不同
     renderFindDiff(levelData) {
         this.createText('找出不同的那个', 220);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const items = ['⭐','⭐','⭐','🌟','⭐'];
         const shuffled = [...items].sort(() => Math.random() - 0.5);
         
         shuffled.forEach(item => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.style.fontSize = '40px';
             btn.textContent = item;
@@ -2194,7 +2210,7 @@ class EmotionPuzzleGame {
             };
             container.appendChild(btn);
         });
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 记忆翻牌
@@ -2206,14 +2222,14 @@ class EmotionPuzzleGame {
         const selected = symbols.slice(0, pairs);
         const cards = [...selected, ...selected].sort(() => Math.random() - 0.5);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.style.cssText = 'position:absolute;top:300px;left:50%;transform:translateX(-50%);display:grid;grid-template-columns:repeat(3,80px);gap:10px;';
         
         let flipped = [];
         let matched = 0;
         
         cards.forEach((symbol, idx) => {
-            const card = document.createElement('div');
+            const card = $$('div');
             card.style.cssText = 'width:80px;height:80px;background:#4ECDC4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;';
             card.textContent = '?';
             card.onclick = () => {
@@ -2243,22 +2259,22 @@ class EmotionPuzzleGame {
             };
             container.appendChild(card);
         });
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 重力球
     renderGravityBall(levelData) {
         this.createText('点击让球掉进杯子', 220);
         
-        const gameArea = document.createElement('div');
+        const gameArea = $$('div');
         gameArea.style.cssText = 'position:absolute;top:300px;left:0;right:0;bottom:0;';
         
-        const ball = document.createElement('div');
+        const ball = $$('div');
         ball.textContent = '⚽';
         ball.style.cssText = 'position:absolute;left:50%;top:50px;font-size:40px;transition:all 0.1s;';
         gameArea.appendChild(ball);
         
-        const cup = document.createElement('div');
+        const cup = $$('div');
         cup.textContent = '� cup';
         cup.style.cssText = 'position:absolute;left:50%;bottom:100px;transform:translateX(-50%);font-size:50px;';
         gameArea.appendChild(cup);
@@ -2266,7 +2282,7 @@ class EmotionPuzzleGame {
         let velocityY = 0;
         let isRunning = false;
         
-        const startBtn = document.createElement('button');
+        const startBtn = $$('button');
         startBtn.className = 'game-btn';
         startBtn.style.top = '500px';
         startBtn.textContent = '开始';
@@ -2301,7 +2317,7 @@ class EmotionPuzzleGame {
         };
         gameArea.appendChild(startBtn);
         
-        document.getElementById('game-root').appendChild(gameArea);
+        ($('game-root') || {appendChild:function(){}}).appendChild(gameArea);
     }
     
     // 玩法: 终极挑战
@@ -2335,11 +2351,11 @@ class EmotionPuzzleGame {
             const q = questions[current];
             this.createText(q.q, 280);
             
-            const container = document.createElement('div');
+            const container = $$('div');
             container.className = 'level-container';
             
             q.opts.forEach(opt => {
-                const btn = document.createElement('button');
+                const btn = $$('button');
                 btn.className = 'math-btn';
                 btn.textContent = opt;
                 btn.onclick = () => {
@@ -2349,7 +2365,7 @@ class EmotionPuzzleGame {
                 };
                 container.appendChild(btn);
             });
-            document.getElementById('game-root').appendChild(container);
+            ($('game-root') || {appendChild:function(){}}).appendChild(container);
         };
         showQ();
     }
@@ -2362,11 +2378,11 @@ class EmotionPuzzleGame {
         
         this.createText('找出镜像相同的', 220);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         options.forEach(opt => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.style.fontSize = '40px';
             btn.textContent = opt;
@@ -2378,7 +2394,7 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 找影子
@@ -2388,13 +2404,13 @@ class EmotionPuzzleGame {
         
         this.createText('找出相同的图案', 220);
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const shuffled = [...icons].sort(() => Math.random() - 0.5);
         
         shuffled.forEach(icon => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.style.fontSize = '40px';
             btn.textContent = icon;
@@ -2408,14 +2424,14 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 拔河
     renderTugOfWar(levelData) {
         this.createText('快速点击把绳子拉过来！', 250);
         
-        const bar = document.createElement('div');
+        const bar = $$('div');
         bar.style.width = '500px';
         bar.style.height = '30px';
         bar.style.background = '#333';
@@ -2425,7 +2441,7 @@ class EmotionPuzzleGame {
         bar.style.top = '50%';
         bar.style.transform = 'translate(-50%, -50%)';
         
-        const marker = document.createElement('div');
+        const marker = $$('div');
         marker.style.width = '20px';
         marker.style.height = '40px';
         marker.style.background = '#FF6B6B';
@@ -2436,11 +2452,11 @@ class EmotionPuzzleGame {
         marker.style.transform = 'translate(-50%, -50%)';
         
         bar.appendChild(marker);
-        document.getElementById('game-root').appendChild(bar);
+        ($('game-root') || {appendChild:function(){}}).appendChild(bar);
         
         let pos = 50;
         
-        document.getElementById('game-root').onclick = () => {
+        ($('game-root') || {appendChild:function(){}}).onclick = () => {
             pos -= 2;
             marker.style.left = pos + '%';
             
@@ -2454,7 +2470,7 @@ class EmotionPuzzleGame {
     renderTrace(levelData) {
         this.createText('沿虚线滑动', 250);
         
-        const path = document.createElement('div');
+        const path = $$('div');
         path.style.width = '300px';
         path.style.height = '200px';
         path.style.border = '3px dashed rgba(255,255,255,0.3)';
@@ -2464,7 +2480,7 @@ class EmotionPuzzleGame {
         path.style.top = '50%';
         path.style.transform = 'translate(-50%, -50%)';
         
-        document.getElementById('game-root').appendChild(path);
+        ($('game-root') || {appendChild:function(){}}).appendChild(path);
         
         let traceCount = 0;
         
@@ -2482,14 +2498,14 @@ class EmotionPuzzleGame {
     renderCountdown(levelData) {
         this.createText('快完成！', 250);
         
-        const timer = document.createElement('div');
+        const timer = $$('div');
         timer.style.fontSize = '60px';
         timer.style.color = '#FF6B6B';
         timer.style.position = 'absolute';
         timer.style.left = '50%';
         timer.style.top = '40%';
         timer.style.transform = 'translate(-50%, -50%)';
-        document.getElementById('game-root').appendChild(timer);
+        ($('game-root') || {appendChild:function(){}}).appendChild(timer);
         
         let timeLeft = 5;
         
@@ -2504,7 +2520,7 @@ class EmotionPuzzleGame {
         }, 1000);
         
         // 点击完成
-        document.getElementById('game-root').onclick = () => {
+        ($('game-root') || {appendChild:function(){}}).onclick = () => {
             clearInterval(interval);
             this.completeLevel(levelData.reward);
         };
@@ -2522,7 +2538,7 @@ class EmotionPuzzleGame {
                 return;
             }
             
-            const target = document.createElement('div');
+            const target = $$('div');
             target.textContent = '🎯';
             target.style.position = 'absolute';
             target.style.left = (Math.random() * 60 + 20) + '%';
@@ -2542,7 +2558,7 @@ class EmotionPuzzleGame {
                 }
             };
             
-            document.getElementById('game-root').appendChild(target);
+            ($('game-root') || {appendChild:function(){}}).appendChild(target);
             
             setTimeout(() => {
                 if (target.parentElement) {
@@ -2564,11 +2580,11 @@ class EmotionPuzzleGame {
         this.createText('记住节奏并重复', 250);
         
         let step = 0;
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         for (let i = 1; i <= 4; i++) {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = i;
             btn.onclick = () => {
@@ -2587,14 +2603,14 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         }
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 捉迷藏
     renderHideSeek(levelData) {
         this.createText('抓住逃跑的星星！', 250);
         
-        const star = document.createElement('div');
+        const star = $$('div');
         star.textContent = '⭐';
         star.style.position = 'absolute';
         star.style.fontSize = '50px';
@@ -2604,7 +2620,7 @@ class EmotionPuzzleGame {
         star.style.cursor = 'pointer';
         star.style.transition = 'all 0.3s ease';
         
-        document.getElementById('game-root').appendChild(star);
+        ($('game-root') || {appendChild:function(){}}).appendChild(star);
         
         let clickCount = 0;
         
@@ -2626,12 +2642,12 @@ class EmotionPuzzleGame {
         setInterval(move, 1500);
     }
     renderMath(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         const answers = [11, 13, 15, 17];
         answers.forEach((ans, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = ans;
             btn.onclick = () => {
@@ -2644,7 +2660,7 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法: 终极大冒险
@@ -2652,22 +2668,22 @@ class EmotionPuzzleGame {
         this.createText('🎊 恭喜你到达最终关！', 250);
         this.createText('感谢你一路的陪伴~', 310);
         
-        const btn = document.createElement('button');
+        const btn = $$('button');
         btn.className = 'game-btn';
         btn.style.top = '400px';
         btn.textContent = '🎁 领取奖励';
         btn.onclick = () => this.completeLevel(levelData.reward);
-        document.getElementById('game-root').appendChild(btn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(btn);
     }
     
     // 玩法1: 点击序列
     renderTapSequence(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         // 创建5个星星按钮
         for (let i = 1; i <= 5; i++) {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'star-btn';
             btn.textContent = '⭐';
             btn.onclick = () => {
@@ -2677,7 +2693,7 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         }
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 检查点击序列
@@ -2692,11 +2708,11 @@ class EmotionPuzzleGame {
     
     // 玩法2: 找规律
     renderFindPattern(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         levelData.pattern.forEach((val, idx) => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = val === 1 ? 'pattern-btn special' : 'pattern-btn';
             btn.textContent = '💎';
             btn.onclick = () => {
@@ -2709,7 +2725,7 @@ class EmotionPuzzleGame {
             container.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 玩法3: 拖拽配对
@@ -2720,27 +2736,27 @@ class EmotionPuzzleGame {
     
     // 玩法: 数一数
     renderCount(levelData) {
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         // 显示5个圆形
         for (let i = 0; i < 5; i++) {
-            const circle = document.createElement('div');
+            const circle = $$('div');
             circle.className = 'count-circle';
             circle.textContent = '●';
             container.appendChild(circle);
         }
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
         
         // 答案选项
         const answers = [4, 5, 6];
-        const answerContainer = document.createElement('div');
+        const answerContainer = $$('div');
         answerContainer.className = 'answer-row';
         answerContainer.style.top = '400px';
         
         answers.forEach(ans => {
-            const btn = document.createElement('button');
+            const btn = $$('button');
             btn.className = 'math-btn';
             btn.textContent = ans;
             btn.onclick = () => {
@@ -2753,7 +2769,7 @@ class EmotionPuzzleGame {
             answerContainer.appendChild(btn);
         });
         
-        document.getElementById('game-root').appendChild(answerContainer);
+        ($('game-root') || {appendChild:function(){}}).appendChild(answerContainer);
     }
     
     // 玩法: 记忆大师
@@ -2767,18 +2783,18 @@ class EmotionPuzzleGame {
         
         setTimeout(() => {
             // 4个按钮让玩家选择
-            const container = document.createElement('div');
+            const container = $$('div');
             container.className = 'level-container';
             
             for (let i = 1; i <= 4; i++) {
-                const btn = document.createElement('button');
+                const btn = $$('button');
                 btn.className = 'memory-btn';
                 btn.textContent = i;
                 btn.onclick = () => this.checkMemory(levelData, i);
                 container.appendChild(btn);
             }
             
-            document.getElementById('game-root').appendChild(container);
+            ($('game-root') || {appendChild:function(){}}).appendChild(container);
         }, 2500);
         
         this.memoryInput = [];
@@ -2800,19 +2816,19 @@ class EmotionPuzzleGame {
     
     // 玩法: 等待时机
     renderTiming(levelData) {
-        const indicator = document.createElement('div');
+        const indicator = $$('div');
         indicator.className = 'timing-indicator';
         
-        const zone = document.createElement('div');
+        const zone = $$('div');
         zone.className = 'timing-zone';
         
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'timing-container';
         container.appendChild(zone);
         container.appendChild(indicator);
         
         container.style.top = '300px';
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
         
         // 动画
         let pos = 0;
@@ -2844,11 +2860,11 @@ class EmotionPuzzleGame {
         this.createText('点击颜色正确的方块', 250);
         
         const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF6B6B'];
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'level-container';
         
         colors.forEach((color, idx) => {
-            const block = document.createElement('div');
+            const block = $$('div');
             block.className = 'puzzle-block';
             block.style.background = color;
             block.onclick = () => {
@@ -2861,7 +2877,7 @@ class EmotionPuzzleGame {
             container.appendChild(block);
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
     }
     
     // 完成关卡
@@ -2886,7 +2902,7 @@ class EmotionPuzzleGame {
     
     // 奖励弹窗
     showRewardDialog(emotion) {
-        const dialog = document.createElement('div');
+        const dialog = $$('div');
         dialog.className = 'reward-dialog';
         dialog.innerHTML = `
             <div class="dialog-content">
@@ -2905,7 +2921,7 @@ class EmotionPuzzleGame {
                 </div>
             </div>
         `;
-        document.getElementById('game-root').appendChild(dialog);
+        ($('game-root') || {appendChild:function(){}}).appendChild(dialog);
     }
     
     // 微信分享功能
@@ -2941,7 +2957,7 @@ class EmotionPuzzleGame {
     
     // 首页添加分享按钮
     addHomeShareButton() {
-        const shareBtn = document.createElement('button');
+        const shareBtn = $$('button');
         shareBtn.textContent = '📤 分享游戏';
         shareBtn.className = 'game-btn';
         shareBtn.style.top = '900px';
@@ -2949,7 +2965,7 @@ class EmotionPuzzleGame {
         shareBtn.onclick = () => {
             this.shareToFriends('神秘');
         };
-        document.getElementById('game-root').appendChild(shareBtn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(shareBtn);
     }
     
     // 收藏馆
@@ -2966,13 +2982,13 @@ class EmotionPuzzleGame {
         }
         
         // 展示已收集的情绪瓶
-        const container = document.createElement('div');
+        const container = $$('div');
         container.className = 'collection-grid';
         
         this.emotionBottles.forEach(bottleId => {
             const emotion = GAME_CONFIG.emotionTypes.find(e => e.id === bottleId);
             if (emotion) {
-                const bottle = document.createElement('div');
+                const bottle = $$('div');
                 bottle.className = 'bottle-item';
                 bottle.style.background = emotion.color;
                 bottle.innerHTML = `
@@ -2982,7 +2998,7 @@ class EmotionPuzzleGame {
             }
         });
         
-        document.getElementById('game-root').appendChild(container);
+        ($('game-root') || {appendChild:function(){}}).appendChild(container);
         
         // 解锁的故事
         this.createText('📖 已解锁故事:', 450);
@@ -2995,16 +3011,16 @@ class EmotionPuzzleGame {
     
     // 获取 DOM 元素的辅助函数（兼容微信小程序）
     getElement(id) {
-        if (typeof document !== 'undefined' && document.getElementById) {
-            return document.getElementById(id);
+        if (typeof document !== 'undefined' && $) {
+            return $(id);
         }
         return null;
     }
     
     // 创建 DOM 元素的辅助函数
     createElement(tag) {
-        if (typeof document !== 'undefined' && document.createElement) {
-            return document.createElement(tag);
+        if (typeof document !== 'undefined' && $$) {
+            return $$(tag);
         }
         return null;
     }
@@ -3021,19 +3037,19 @@ class EmotionPuzzleGame {
     }
     
     createText(text, top, className = 'normal-text') {
-        const el = document.createElement('div');
+        const el = $$('div');
         el.className = className;
         el.textContent = text;
         el.style.top = top + 'px';
-        document.getElementById('game-root').appendChild(el);
+        ($('game-root') || {appendChild:function(){}}).appendChild(el);
     }
     
     createButton(text, onClick) {
-        const btn = document.createElement('button');
+        const btn = $$('button');
         btn.className = 'game-btn';
         btn.textContent = text;
         btn.onclick = onClick;
-        document.getElementById('game-root').appendChild(btn);
+        ($('game-root') || {appendChild:function(){}}).appendChild(btn);
     }
     
     createTip(text) {
@@ -3041,20 +3057,20 @@ class EmotionPuzzleGame {
     }
     
     showTip(text) {
-        const tip = document.createElement('div');
+        const tip = $$('div');
         tip.className = 'tip';
         tip.textContent = text;
-        document.getElementById('game-root').appendChild(tip);
+        ($('game-root') || {appendChild:function(){}}).appendChild(tip);
         setTimeout(() => tip.remove(), 2000);
     }
     
     createBackgroundAnimation() {
         // 飘动的情绪瓶背景
-        const bg = document.createElement('div');
+        const bg = $$('div');
         bg.className = 'bg-animation';
         
         for (let i = 0; i < 10; i++) {
-            const bottle = document.createElement('div');
+            const bottle = $$('div');
             bottle.className = 'floating-bottle';
             bottle.style.left = Math.random() * 100 + '%';
             bottle.style.animationDelay = Math.random() * 5 + 's';
@@ -3062,7 +3078,7 @@ class EmotionPuzzleGame {
             bg.appendChild(bottle);
         }
         
-        document.getElementById('game-root').appendChild(bg);
+        ($('game-root') || {appendChild:function(){}}).appendChild(bg);
     }
 }
 
