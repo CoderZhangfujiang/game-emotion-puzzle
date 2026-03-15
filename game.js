@@ -6,110 +6,69 @@
  */
 
 // ==================== 浏览器/微信环境兼容层 ====================
-// 检测运行环境
-const isWeChatMiniProgram = typeof wx !== 'undefined' && typeof wx.createSelectorQuery === 'function';
-const isBrowser = typeof document !== 'undefined' && typeof document.createElement === 'function';
 
-// 为微信小程序创建兼容的 document
-if (!isBrowser) {
-    // 模拟 DOM 元素容器
-    const elementCache = {};
-    let elementIdCounter = 0;
+// ==================== 微信小游戏兼容层 ====================
+// 使用 MiniGame 对象替代 document
+const MiniGame = {
+    elementCache: {},
     
-    window.document = {
-        createElement: function(tag) {
-            const id = 'el_' + (elementIdCounter++);
-            const el = {
-                id: id,
-                tagName: tag.toUpperCase(),
-                className: '',
-                style: {},
-                children: [],
-                parentNode: null,
-                innerHTML: '',
-                textContent: '',
-                value: '',
-                offsetTop: 0,
-                offsetLeft: 0,
-                clientHeight: 500,
-                clientWidth: 375,
-                getBoundingClientRect: function() { return { x: 0, y: 0, width: 375, height: 500 }; },
-                appendChild: function(child) {
-                    child.parentNode = this;
-                    this.children.push(child);
-                    return child;
-                },
-                remove: function() {
-                    if (this.parentNode) {
-                        const idx = this.parentNode.children.indexOf(this);
-                        if (idx > -1) this.parentNode.children.splice(idx, 1);
-                    }
-                },
-                addEventListener: function() {},
-                removeEventListener: function() {},
-                focus: function() {},
-                click: function() {}
-            };
-            elementCache[id] = el;
-            return el;
-        },
-        
-        getElementById: function(id) {
-            return elementCache[id] || null;
-        },
-        
-        querySelector: function(selector) {
-            if (selector === '#game-root') {
-                return elementCache['game-root'] || this.createElement('div');
-            }
-            return null;
-        },
-        
-        querySelectorAll: function() { return []; },
-        
-        body: {
-            appendChild: function(child) {
-                child.parentNode = this;
-                this.children.push(child);
-                return child;
-            }
-        }
-    };
+    createElement: function(tag) {
+        const el = {
+            id: 'el_' + (Math.random() * 100000 | 0),
+            tagName: tag.toUpperCase(),
+            className: '',
+            style: {},
+            children: [],
+            parentNode: null,
+            innerHTML: '',
+            textContent: '',
+            value: '',
+            offsetTop: 0,
+            offsetLeft: 0,
+            clientHeight: 500,
+            clientWidth: 375,
+            getBoundingClientRect: function() { return { x: 0, y: 0, width: 375, height: 500 }; },
+            appendChild: function(child) { child.parentNode = this; this.children.push(child); return child; },
+            remove: function() { if (this.parentNode) { const idx = this.parentNode.children.indexOf(this); if (idx > -1) this.parentNode.children.splice(idx, 1); } },
+            addEventListener: function() {},
+            removeEventListener: function() {},
+            focus: function() {},
+            click: function() {}
+        };
+        return el;
+    },
     
-    // 模拟事件对象
-    window.Event = function() {};
+    getElementById: function(id) {
+        return this.elementCache[id] || null;
+    },
     
-    // 模拟 localStorage
-    const storageData = {};
+    setElement: function(id, el) {
+        this.elementCache[id] = el;
+    },
+    
+    storageData: {},
+    getStorageSync: function(key) { return this.storageData[key] || null; },
+    setStorageSync: function(key, value) { this.storageData[key] = value; }
+};
+
+// 兼容函数
+const $$ = MiniGame.createElement;
+const $ = function(id) { return MiniGame.getElementById(id); };
+
+// 模拟 localStorage
+if (typeof localStorage === 'undefined') {
     window.localStorage = {
-        getItem: function(key) { return storageData[key] || null; },
-        setItem: function(key, value) { storageData[key] = value; },
-        removeItem: function(key) { delete storageData[key]; },
-        clear: function() { Object.keys(storageData).forEach(k => delete storageData[k]); }
-    };
-    
-    // 模拟 navigator
-    window.navigator = {
-        clipboard: { writeText: function() { return Promise.resolve(); } },
-        userAgent: 'wechat-miniprogram'
+        getItem: function(key) { return MiniGame.storageData[key] || null; },
+        setItem: function(key, value) { MiniGame.storageData[key] = value; },
+        removeItem: function(key) { delete MiniGame.storageData[key]; },
+        clear: function() { MiniGame.storageData = {}; }
     };
 }
 
-// ==================== 全局兼容函数 ====================
-// 兼容 document 的简写函数
-const $ = function(id) {
-    if (typeof document !== 'undefined' && $) {
-        return $(id);
-    }
-    return null;
-};
-
-const $$ = function(tag) {
-    if (typeof document !== 'undefined' && $$) {
-        return $$(tag);
-    }
-    return null;
-};
+// 模拟 navigator
+if (typeof navigator === 'undefined') {
+    window.navigator = { clipboard: { writeText: function() { return Promise.resolve(); } }, userAgent: 'wechat-miniprogram' };
+}
 
 // ==================== 游戏配置 ====================
 const GAME_CONFIG = {
