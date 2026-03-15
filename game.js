@@ -491,3 +491,4 @@ if (isMiniGame) {
 if (typeof document !== 'undefined') {
     console.log('浏览器环境');
 }
+
