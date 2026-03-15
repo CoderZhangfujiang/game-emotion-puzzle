@@ -694,12 +694,24 @@ class EmotionPuzzleGame {
     // 加载存档
     loadProgress() {
         try {
-            const saved = wx.getStorageSync('emotion_progress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                this.currentLevel = data.currentLevel || 1;
-                this.emotionBottles = data.emotionBottles || [];
-                this.unlockedStories = data.unlockedStories || [];
+            // 优先使用微信小程序的存储
+            if (typeof wx !== 'undefined' && wx.getStorageSync) {
+                const saved = wx.getStorageSync('emotion_progress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.currentLevel = data.currentLevel || 1;
+                    this.emotionBottles = data.emotionBottles || [];
+                    this.unlockedStories = data.unlockedStories || [];
+                }
+            } else if (typeof localStorage !== 'undefined') {
+                // 浏览器环境使用 localStorage
+                const saved = localStorage.getItem('emotion_progress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.currentLevel = data.currentLevel || 1;
+                    this.emotionBottles = data.emotionBottles || [];
+                    this.unlockedStories = data.unlockedStories || [];
+                }
             }
         } catch (e) {
             console.log('新玩家');
@@ -708,11 +720,17 @@ class EmotionPuzzleGame {
     
     // 保存存档
     saveProgress() {
-        wx.setStorageSync('emotion_progress', JSON.stringify({
+        const data = {
             currentLevel: this.currentLevel,
             emotionBottles: this.emotionBottles,
             unlockedStories: this.unlockedStories
-        }));
+        };
+        
+        if (typeof wx !== 'undefined' && wx.setStorageSync) {
+            wx.setStorageSync('emotion_progress', JSON.stringify(data));
+        } else if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('emotion_progress', JSON.stringify(data));
+        }
     }
     
     // ==================== 场景管理 ====================
