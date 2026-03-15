@@ -44,7 +44,7 @@ if (isMiniGame) {
     const drawBtn = (x, y, w, h, text, color) => {
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(x, y, w, h, h/2) : ctx.fillRect(x, y, w, h);
+        ctx.fillRect(x, y, w, h);
         ctx.fill();
         drawText(text, x + w/2, y + h/2 + 10, 32);
     };
