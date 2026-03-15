@@ -139,7 +139,7 @@ if (isMiniGame) {
     
     function drawText(text, x, y, size, color) {
         ctx.font = size + 'px Microsoft YaHei';
-        ctx.fillStyle = color  '#ffffff';
+        ctx.fillStyle = color || '#ffffff';
         ctx.textAlign = 'center';
         ctx.fillText(text, x, y);
     }
@@ -180,7 +180,7 @@ if (isMiniGame) {
     
     function showTempMessage(msg, color, duration) {
         showMessage = msg;
-        messageColor = color  '#FFD700';
+        messageColor = color || '#FFD700';
         renderGame();
         if (messageTimer) {
             clearTimeout(messageTimer);
@@ -188,7 +188,7 @@ if (isMiniGame) {
         messageTimer = setTimeout(function() {
             showMessage = '';
             renderGame();
-        }, duration  1500);
+        }, duration || 1500);
     }
     
     function renderHome() {
@@ -265,7 +265,7 @@ if (isMiniGame) {
         drawText(levelData.desc, 375, 170, 22, 'rgba(255,255,255,0.7)');
         
         // 根据关卡类型渲染不同的游戏内容
-        if (levelData.type === 'tap_sequence'  levelData.type === 'tap') {
+        if (levelData.type === 'tap_sequence' || levelData.type === 'tap') {
             // 绘制数字按钮
             var maxNum = levelData.answer ? Math.max.apply(null, levelData.answer) : 10;
             var btnY = 300;
@@ -400,7 +400,7 @@ if (isMiniGame) {
             
             // 游戏逻辑 - 简单版：按顺序点击
             var levelData = levelConfigs[currentLevel - 1];
-            if (levelData && (levelData.type === 'tap_sequence'  levelData.type === 'tap')) {
+            if (levelData && (levelData.type === 'tap_sequence' || levelData.type === 'tap')) {
                 var maxNum = levelData.answer ? Math.max.apply(null, levelData.answer) : 10;
                 var btnY = 300;
                 
@@ -431,7 +431,7 @@ if (isMiniGame) {
                                         currentLevel = gameData.currentLevel;
                                         saveGameData();
                                         
-                                        showTempMessage('🎉 通关成功！获得 ' + (emotionTypes.find(function(e) { return e.id === reward; })  {}).name, '#FFD700', 2000);
+                                        showTempMessage('🎉 通关成功！获得 ' + (emotionTypes.find(function(e) { return e.id === reward; }) || {}).name, '#FFD700', 2000);
                                         setTimeout(function() {
                                             renderLevelSelect();
                                         }, 2000);
@@ -452,7 +452,7 @@ if (isMiniGame) {
                     }
                 }
             }
-        } else if (currentPage === 'collection'  currentPage === 'rank'  currentPage === 'task') {
+        } else if (currentPage === 'collection' || currentPage === 'rank' || currentPage === 'task') {
             if (y >= 1200 && y <= 1290) {
                 renderHome();
             }
