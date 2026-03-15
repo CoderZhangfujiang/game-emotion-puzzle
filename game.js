@@ -11,7 +11,6 @@ if (isMiniGame) {
     var ctx = canvas.getContext('2d');
     
     var currentLevel = 1;
-    var emotionBottles = [];
     var currentPage = 'home';
     
     function drawBg() {
@@ -121,18 +120,21 @@ if (isMiniGame) {
         }
     }
     
+    // 渲染首页
     renderHome();
     
-    // 使用 Ticker 进行游戏循环和事件处理
-    var Ticker = wx.createTicker();
-    Ticker.addFrameListener(function() {
-        // 可以在这里处理游戏逻辑
-    });
-    Ticker.start();
+    // 使用 requestAnimationFrame 模拟游戏循环
+    function gameLoop() {
+        // 可以在这里添加游戏逻辑
+    }
     
-    // 尝试绑定触摸事件
-    var listener = function(res) {
-        if (res.touches && res.touches.length > 0) {
+    if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(gameLoop);
+    }
+    
+    // 触摸事件处理 - 使用 canvas.ontouchstart
+    canvas.ontouchstart = function(res) {
+        if (res && res.touches && res.touches.length > 0) {
             var touch = res.touches[0];
             var info = wx.getSystemInfoSync();
             var x = touch.clientX * (750 / info.windowWidth);
@@ -140,13 +142,6 @@ if (isMiniGame) {
             handleTouch(x, y);
         }
     };
-    
-    // 尝试使用 canvas 绑定事件
-    try {
-        canvas.addEventListener('touchstart', listener);
-    } catch (e) {
-        console.log('addEventListener not supported');
-    }
     
     console.log('情绪解谜馆启动成功');
 }
