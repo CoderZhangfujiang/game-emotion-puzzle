@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#667eea",
+    "navigationBarTitleText": "情绪解谜馆",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#1a1a2e"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}
