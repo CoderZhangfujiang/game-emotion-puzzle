@@ -8,7 +8,7 @@
 // ==================== 浏览器/微信环境兼容层 ====================
 // 检测运行环境
 const isWeChatMiniProgram = typeof wx !== 'undefined' && typeof wx.createSelectorQuery === 'function';
-const isBrowser = typeof document !== 'undefined' && typeof $$ === 'function';
+const isBrowser = typeof document !== 'undefined' && typeof document.createElement === 'function';
 
 // 为微信小程序创建兼容的 document
 if (!isBrowser) {
