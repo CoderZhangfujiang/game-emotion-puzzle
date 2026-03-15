@@ -1,10 +1,5 @@
 /**
  * 情绪解谜馆 - 微信小游戏
- * 治愈系轻量解谜 + 收集 + 社交
- * 
- * 运行方式：
- * 1. 浏览器预览：直接打开 index.html
- * 2. 微信小游戏：导入微信开发者工具
  */
 
 // 检测运行环境
@@ -14,210 +9,170 @@ const isMiniGame = typeof wx !== 'undefined' && typeof wx.createCanvas === 'func
 if (isMiniGame) {
     // 创建画布
     const canvas = wx.createCanvas();
-    const ctx = canvas.getContext('2d');
-    
     canvas.width = 750;
     canvas.height = 1334;
+    const ctx = canvas.getContext('2d');
     
     // 游戏状态
     let currentLevel = 1;
     let emotionBottles = [];
     
     // 绘制背景
-    const drawBg = () => {
+    function drawBg() {
         const gradient = ctx.createLinearGradient(0, 0, 0, 1334);
         gradient.addColorStop(0, '#667eea');
         gradient.addColorStop(1, '#764ba2');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 750, 1334);
-    };
+    }
     
     // 绘制文本
-    const drawText = (text, x, y, size = 30, color = '#fff') => {
+    function drawText(text, x, y, size, color) {
         ctx.font = size + 'px Microsoft YaHei';
-        ctx.fillStyle = color;
+        ctx.fillStyle = color || '#ffffff';
         ctx.textAlign = 'center';
         ctx.fillText(text, x, y);
-    };
+    }
     
     // 绘制按钮
-    const drawBtn = (x, y, w, h, text, color) => {
+    function drawBtn(x, y, w, h, text, color) {
         ctx.fillStyle = color;
+        // 圆角矩形
+        const r = 20;
         ctx.beginPath();
-        ctx.fillRect(x, y, w, h);
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
         ctx.fill();
-        drawText(text, x + w/2, y + h/2 + 10, 32);
-    };
+        drawText(text, x + w/2, y + h/2 + 8, 32);
+    }
+    
+    // 绘制带边框的圆形按钮
+    function drawCircleBtn(x, y, r, text) {
+        ctx.fillStyle = '#4ECDC4';
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        drawText(text, x, y + 10, 36);
+    }
     
     // 首页
-    const renderHome = () => {
+    function renderHome() {
         drawBg();
-        drawText('🎭 情绪解谜馆', 375, 180, 50);
-        drawBtn(175, 300, 400, 90, '开始解谜', '#ff6b6b');
-        drawBtn(175, 420, 400, 90, '📚 我的收藏', '#4ECDC4');
-        drawBtn(175, 540, 400, 90, '🏆 排行榜', '#FFD700');
-        drawBtn(175, 660, 400, 90, '📋 每日任务', '#9B59B6');
-    };
+        drawText('🎭 情绪解谜馆', 375, 150, 56);
+        
+        // 绘制4个主按钮
+        drawBtn(100, 250, 550, 100, '开始解谜', '#ff6b6b');
+        drawBtn(100, 380, 550, 100, '📚 我的收藏', '#4ECDC4');
+        drawBtn(100, 510, 550, 100, '🏆 排行榜', '#FFD700');
+        drawBtn(100, 640, 550, 100, '📋 每日任务', '#9B59B6');
+        
+        // 绘制底部提示
+        drawText('点击按钮开始游戏', 375, 1200, 24, 'rgba(255,255,255,0.6)');
+    }
     
     // 游戏页面
-    const renderGame = () => {
+    function renderGame() {
         drawBg();
-        drawText('🎮 第' + currentLevel + '关', 375, 100, 40);
-        drawText('点击按钮开始游戏', 375, 160, 26);
+        drawText('🎮 第' + currentLevel + '关', 375, 80, 40);
+        drawText('按顺序点击1-5', 375, 140, 24, 'rgba(255,255,255,0.8)');
         
-        // 绘制5个星星
+        // 绘制5个数字按钮
         for(let i = 0; i < 5; i++) {
-            drawBtn(110 + i * 105, 250, 95, 85, (i+1)+'', '#4ECDC4');
+            drawCircleBtn(150 + i * 130, 350, 50, String(i + 1));
         }
         
-        drawBtn(175, 900, 400, 80, '← 返回', '#666');
-    };
+        drawBtn(100, 1100, 550, 90, '← 返回首页', '#666');
+    }
+    
+    // 收藏馆
+    function renderCollection() {
+        drawBg();
+        drawText('📚 我的收藏', 375, 100, 44);
+        drawText('暂无收藏，快去通关吧', 375, 300, 28, 'rgba(255,255,255,0.7)');
+        drawBtn(100, 1100, 550, 90, '← 返回', '#666');
+    }
+    
+    // 排行榜
+    function renderRank() {
+        drawBg();
+        drawText('🏆 排行榜', 375, 100, 44);
+        drawText('暂未开放', 375, 300, 28, 'rgba(255,255,255,0.7)');
+        drawBtn(100, 1100, 550, 90, '← 返回', '#666');
+    }
+    
+    // 每日任务
+    function renderTask() {
+        drawBg();
+        drawText('📋 每日任务', 375, 100, 44);
+        drawText('完成3关，解锁奖励', 375, 250, 28, 'rgba(255,255,255,0.7)');
+        drawText('奖励：开心情绪瓶', 375, 320, 26, '#FFD700');
+        drawBtn(100, 1100, 550, 90, '← 返回', '#666');
+    }
     
     // 渲染首页
     renderHome();
     
-    // 触摸事件
-    canvas.addEventListener('touchstart', (e) => {
+    // 当前页面
+    let currentPage = 'home';
+    
+    // 触摸事件处理
+    canvas.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        
         const touch = e.touches[0];
         const info = wx.getSystemInfoSync();
         const x = touch.clientX * (750 / info.windowWidth);
         const y = touch.clientY * (1334 / info.windowHeight);
         
         // 首页按钮检测
-        if (y >= 300 && y <= 390) {
-            // 开始游戏
-            renderGame();
-        } else if (y >= 420 && y <= 510) {
-            drawBg();
-            drawText('📚 收藏馆', 375, 200, 40);
-            drawText('暂无收藏', 375, 300, 28);
-            drawBtn(175, 800, 400, 80, '← 返回', '#666');
-        } else if (y >= 540 && y <= 630) {
-            drawBg();
-            drawText('🏆 排行榜', 375, 200, 40);
-            drawText('暂未开放', 375, 300, 28);
-            drawBtn(175, 800, 400, 80, '← 返回', '#666');
-        } else if (y >= 660 && y <= 750) {
-            drawBg();
-            drawText('📋 每日任务', 375, 200, 40);
-            drawText('完成3关 解锁奖励', 375, 300, 28);
-            drawBtn(175, 800, 400, 80, '← 返回', '#666');
-        } else if (y >= 900 && y <= 980) {
-            renderHome();
+        if (currentPage === 'home') {
+            if (y >= 250 && y <= 350) {
+                currentPage = 'game';
+                renderGame();
+            } else if (y >= 380 && y <= 480) {
+                currentPage = 'collection';
+                renderCollection();
+            } else if (y >= 510 && y <= 610) {
+                currentPage = 'rank';
+                renderRank();
+            } else if (y >= 640 && y <= 740) {
+                currentPage = 'task';
+                renderTask();
+            }
+        } else {
+            // 其他页面返回首页
+            if (y >= 1100 && y <= 1190) {
+                currentPage = 'home';
+                renderHome();
+            }
         }
     });
     
-    console.log('情绪解谜馆 - 微信小游戏环境已启动');
-}
-else {
-    // ==================== 浏览器环境兼容层 ====================
-    const MiniGame = {
-        elementCache: {},
-        createElement: (tag) => ({
-            id: 'el_' + Math.random().toString(36).substr(2, 9),
-            tagName: tag.toUpperCase(), className: '', style: {}, children: [], parentNode: null,
-            innerHTML: '', textContent: '', value: '',
-            appendChild: function(c) { c.parentNode = this; this.children.push(c); return c; },
-            remove: function() { if(this.parentNode){const i=this.parentNode.children.indexOf(this);if(i>-1)this.parentNode.children.splice(i,1);} },
-            addEventListener: function(){}, removeEventListener: function(){}
-        }),
-        getElementById: function(id) { return this.elementCache[id] || null; },
-        setElement: function(id, el) { this.elementCache[id] = el; },
-        storageData: {}
-    };
-    
-    const $$ = MiniGame.createElement;
-    const $ = (id) => MiniGame.getElementById(id);
-    
-    if (typeof localStorage === 'undefined') {
-        globalThis.localStorage = {
-            getItem: (k) => MiniGame.storageData[k],
-            setItem: (k, v) => MiniGame.storageData[k] = v
-        };
+    // 刷新画布
+    function render() {
+        if (currentPage === 'home') renderHome();
+        else if (currentPage === 'game') renderGame();
+        else if (currentPage === 'collection') renderCollection();
+        else if (currentPage === 'rank') renderRank();
+        else if (currentPage === 'task') renderTask();
     }
     
-    console.log('情绪解谜馆 - 浏览器环境');
+    console.log('情绪解谜馆启动成功');
 }
 
-// ==================== 游戏配置 ====================
-const GAME_CONFIG = {
-    name: '情绪解谜馆',
-    version: '2.0.0',
-    emotionTypes: [
-        { id: 'happy', name: '开心', color: '#FFD700', story: '今天阳光正好，鸟儿在歌唱...' },
-        { id: 'peaceful', name: '平静', color: '#87CEEB', story: '夜晚仰望星空，思绪飘向远方...' },
-        { id: 'surprised', name: '惊喜', color: '#FF69B4', story: '意外收到的礼物，满心欢喜...' },
-        { id: 'nostalgic', name: '怀旧', color: '#DDA0DD', story: '翻开老照片，回忆涌上心头...' },
-        { id: 'touched', name: '感动', color: '#FF6347', story: '家人的温暖，永远是最强的后盾...' },
-        { id: 'grateful', name: '感恩', color: '#20B2AA', story: '感谢生命中遇见的每一个人...' },
-        { id: 'hopeful', name: '希望', color: '#98FB98', story: '明天会更好，充满期待...' },
-        { id: 'calm', name: '从容', color: '#9370DB', story: '看淡得失，坦然面对...' },
-    ]
-};
-
-// 浏览器环境启动游戏
+// ==================== 浏览器环境 ====================
 if (typeof document !== 'undefined') {
-    class EmotionPuzzleGame {
-        constructor() {
-            this.currentLevel = 1;
-            this.emotionBottles = [];
-            this.init();
-        }
-        
-        init() {
-            const root = $('game-root');
-            if (!root) return;
-            this.showHome(root);
-        }
-        
-        clearScreen() {
-            const root = $('game-root');
-            if (root) root.innerHTML = '';
-        }
-        
-        createText(text, top, className = 'normal-text') {
-            const el = $$('div');
-            el.className = className;
-            el.textContent = text;
-            el.style.top = top + 'px';
-            el.style.position = 'absolute';
-            el.style.width = '100%';
-            el.style.textAlign = 'center';
-            const root = $('game-root');
-            if (root) root.appendChild(el);
-        }
-        
-        createButton(text, onClick) {
-            const btn = $$('button');
-            btn.className = 'game-btn';
-            btn.textContent = text;
-            btn.style.position = 'absolute';
-            btn.style.left = '50%';
-            btn.style.transform = 'translateX(-50%)';
-            btn.onclick = onClick;
-            const root = $('game-root');
-            if (root) root.appendChild(btn);
-        }
-        
-        showHome(root) {
-            this.clearScreen();
-            this.createText('🎭 情绪解谜馆', 120);
-            this.createButton('开始解谜', () => this.showLevelSelect());
-            this.createButton('📚 我的收藏', () => this.showCollection());
-        }
-        
-        showLevelSelect() {
-            this.clearScreen();
-            this.createText('第 ' + this.currentLevel + ' 关', 120);
-            this.createButton('返回', () => this.showHome());
-        }
-        
-        showCollection() {
-            this.clearScreen();
-            this.createText('📚 收藏馆', 120);
-            this.createButton('返回', () => this.showHome());
-        }
-    }
-    
-    globalThis.onload = () => new EmotionPuzzleGame();
+    // 浏览器环境的代码在这里
+    console.log('浏览器环境');
 }
