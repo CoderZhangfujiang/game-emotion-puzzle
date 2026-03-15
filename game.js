@@ -127,7 +127,7 @@ if (isMiniGame) {
     
     // 加载数据
     loadGameData();
-    currentLevel = gameData.currentLevel  1;
+    currentLevel = gameData.currentLevel || 1;
     
     function drawBg() {
         var gradient = ctx.createLinearGradient(0, 0, 0, 1334);
