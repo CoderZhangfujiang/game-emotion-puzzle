@@ -5,6 +5,96 @@
  * 运行方式：将项目导入微信开发者工具
  */
 
+// ==================== 浏览器/微信环境兼容层 ====================
+// 检测运行环境
+const isWeChatMiniProgram = typeof wx !== 'undefined' && typeof wx.createSelectorQuery === 'function';
+const isBrowser = typeof document !== 'undefined' && typeof document.createElement === 'function';
+
+// 为微信小程序创建兼容的 document
+if (!isBrowser) {
+    // 模拟 DOM 元素容器
+    const elementCache = {};
+    let elementIdCounter = 0;
+    
+    window.document = {
+        createElement: function(tag) {
+            const id = 'el_' + (elementIdCounter++);
+            const el = {
+                id: id,
+                tagName: tag.toUpperCase(),
+                className: '',
+                style: {},
+                children: [],
+                parentNode: null,
+                innerHTML: '',
+                textContent: '',
+                value: '',
+                offsetTop: 0,
+                offsetLeft: 0,
+                clientHeight: 500,
+                clientWidth: 375,
+                getBoundingClientRect: function() { return { x: 0, y: 0, width: 375, height: 500 }; },
+                appendChild: function(child) {
+                    child.parentNode = this;
+                    this.children.push(child);
+                    return child;
+                },
+                remove: function() {
+                    if (this.parentNode) {
+                        const idx = this.parentNode.children.indexOf(this);
+                        if (idx > -1) this.parentNode.children.splice(idx, 1);
+                    }
+                },
+                addEventListener: function() {},
+                removeEventListener: function() {},
+                focus: function() {},
+                click: function() {}
+            };
+            elementCache[id] = el;
+            return el;
+        },
+        
+        getElementById: function(id) {
+            return elementCache[id] || null;
+        },
+        
+        querySelector: function(selector) {
+            if (selector === '#game-root') {
+                return elementCache['game-root'] || this.createElement('div');
+            }
+            return null;
+        },
+        
+        querySelectorAll: function() { return []; },
+        
+        body: {
+            appendChild: function(child) {
+                child.parentNode = this;
+                this.children.push(child);
+                return child;
+            }
+        }
+    };
+    
+    // 模拟事件对象
+    window.Event = function() {};
+    
+    // 模拟 localStorage
+    const storageData = {};
+    window.localStorage = {
+        getItem: function(key) { return storageData[key] || null; },
+        setItem: function(key, value) { storageData[key] = value; },
+        removeItem: function(key) { delete storageData[key]; },
+        clear: function() { Object.keys(storageData).forEach(k => delete storageData[k]); }
+    };
+    
+    // 模拟 navigator
+    window.navigator = {
+        clipboard: { writeText: function() { return Promise.resolve(); } },
+        userAgent: 'wechat-miniprogram'
+    };
+}
+
 // ==================== 游戏配置 ====================
 const GAME_CONFIG = {
     name: '情绪解谜馆',
