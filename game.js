@@ -12,7 +12,10 @@ if (isMiniGame) {
     
     var currentLevel = 1;
     var currentPage = 'home';
-    var clickedNumbers = []; // 记录已点击的数字
+    var clickedNumbers = [];
+    var lastClickedNum = 0;
+    var showMessage = '';
+    var messageTimer = null;
     
     function drawBg() {
         var gradient = ctx.createLinearGradient(0, 0, 0, 1334);
@@ -46,20 +49,42 @@ if (isMiniGame) {
         drawText(text, x + w/2, y + h/2 + 8, 32);
     }
     
-    function drawCircleBtn(x, y, r, text, isClicked) {
-        ctx.fillStyle = isClicked ? '#ff6b6b' : '#4ECDC4';
+    function drawCircleBtn(x, y, r, text, isClicked, isLastClicked) {
+        if (isLastClicked) {
+            ctx.fillStyle = '#ff6b6b';
+        } else if (isClicked) {
+            ctx.fillStyle = '#98FB98';
+        } else {
+            ctx.fillStyle = '#4ECDC4';
+        }
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 3;
         ctx.stroke();
-        drawText(text, x, y + 10, 36);
+        drawText(text, x, y + 12, 36);
     }
+    
+    function showTempMessage(msg, color, duration) {
+        showMessage = msg;
+        messageColor = color || '#FFD700';
+        renderGame();
+        if (messageTimer) {
+            clearTimeout(messageTimer);
+        }
+        messageTimer = setTimeout(function() {
+            showMessage = '';
+            renderGame();
+        }, duration || 1500);
+    }
+    
+    var messageColor = '#FFD700';
     
     function renderHome() {
         currentPage = 'home';
         clickedNumbers = [];
+        lastClickedNum = 0;
         drawBg();
         drawText('🎭 情绪解谜馆', 375, 150, 56);
         drawBtn(100, 250, 550, 100, '开始解谜', '#ff6b6b');
@@ -70,26 +95,29 @@ if (isMiniGame) {
     
     function renderGame() {
         currentPage = 'game';
-        clickedNumbers = [];
         drawBg();
         drawText('🎮 第' + currentLevel + '关', 375, 80, 40);
         drawText('按顺序点击1-5', 375, 140, 24, 'rgba(255,255,255,0.8)');
+        
         var i = 0;
         for (i = 0; i < 5; i++) {
             var num = i + 1;
             var isClicked = clickedNumbers.indexOf(num) !== -1;
-            drawCircleBtn(150 + i * 130, 350, 50, String(num), isClicked);
+            var isLastClicked = lastClickedNum === num;
+            drawCircleBtn(150 + i * 130, 380, 50, String(num), isClicked, isLastClicked);
         }
-        // 显示已点击提示
-        if (clickedNumbers.length > 0) {
-            drawText('已点击: ' + clickedNumbers.join(', '), 375, 500, 24, '#FFD700');
+        
+        if (showMessage) {
+            drawText(showMessage, 375, 550, 32, messageColor);
         }
+        
         drawBtn(100, 1100, 550, 90, '← 返回首页', '#666');
     }
     
     function renderCollection() {
         currentPage = 'collection';
         clickedNumbers = [];
+        lastClickedNum = 0;
         drawBg();
         drawText('📚 我的收藏', 375, 100, 44);
         drawText('暂无收藏', 375, 300, 28);
@@ -99,6 +127,7 @@ if (isMiniGame) {
     function renderRank() {
         currentPage = 'rank';
         clickedNumbers = [];
+        lastClickedNum = 0;
         drawBg();
         drawText('🏆 排行榜', 375, 100, 44);
         drawText('暂未开放', 375, 300, 28);
@@ -108,6 +137,7 @@ if (isMiniGame) {
     function renderTask() {
         currentPage = 'task';
         clickedNumbers = [];
+        lastClickedNum = 0;
         drawBg();
         drawText('📋 每日任务', 375, 100, 44);
         drawText('完成3关解锁奖励', 375, 250, 28);
@@ -127,24 +157,31 @@ if (isMiniGame) {
                 renderTask();
             }
         } else if (currentPage === 'game') {
-            // 游戏页面：检测圆形按钮点击 (y在300-400之间)
-            if (y >= 300 && y <= 400) {
+            // 返回按钮
+            if (y >= 1100 && y <= 1190) {
+                renderHome();
+                return;
+            }
+            
+            // 游戏页面：检测圆形按钮点击
+            // 按钮中心在 y=380，半径50，范围330-430
+            if (y >= 330 && y <= 430) {
                 for (var i = 0; i < 5; i++) {
                     var btnX = 150 + i * 130;
                     var dx = x - btnX;
-                    var dy = y - 350;
+                    var dy = y - 380;
                     var dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist <= 50) {
-                        // 点击了第i+1个按钮
                         var num = i + 1;
                         if (clickedNumbers.indexOf(num) === -1) {
                             clickedNumbers.push(num);
+                            lastClickedNum = num;
+                            
                             // 检查是否按顺序
                             var expected = clickedNumbers.length;
                             if (num === expected) {
                                 if (clickedNumbers.length === 5) {
-                                    // 全部按顺序点击完成
-                                    drawText('🎉 通关成功！', 375, 600, 36, '#FFD700');
+                                    showTempMessage('🎉 通关成功！', '#FFD700', 2000);
                                     setTimeout(function() {
                                         renderHome();
                                     }, 2000);
@@ -152,34 +189,27 @@ if (isMiniGame) {
                                     renderGame();
                                 }
                             } else {
-                                // 顺序错误
-                                drawText('❌ 顺序错误！重新开始', 375, 600, 28, '#ff6b6b');
+                                showTempMessage('❌ 顺序错误！重新开始', '#ff6b6b', 1500);
                                 setTimeout(function() {
                                     clickedNumbers = [];
+                                    lastClickedNum = 0;
                                     renderGame();
-                                }, 1000);
+                                }, 1500);
                             }
                         }
                         break;
                     }
                 }
             }
-            // 返回按钮
-            if (y >= 1100 && y <= 1190) {
-                renderHome();
-            }
         } else {
-            // 其他页面返回按钮
             if (y >= 1100 && y <= 1190) {
                 renderHome();
             }
         }
     }
     
-    // 渲染首页
     renderHome();
     
-    // 微信小游戏触摸事件绑定
     if (typeof wx.onTouchStart === 'function') {
         wx.onTouchStart(function(res) {
             if (res.touches && res.touches.length > 0) {
