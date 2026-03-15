@@ -1,0 +1,20 @@
+{
+  "description": "情绪解谜馆 - 治愈系轻量解谜小游戏",
+  "version": "1.0.0",
+  "minVersion": "2.19.0",
+  "name": "emotion-puzzle",
+  "main": "index.html",
+  "launchPath": "index.html",
+  "window": {
+    "title": "情绪解谜馆",
+    "width": 750,
+    "height": 1334,
+    "backgroundColor": "#1a1a2e"
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 60000,
+    "downloadFile": 60000
+  }
+}
